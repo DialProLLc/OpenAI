@@ -27,7 +27,7 @@ final public class OpenAI: OpenAIProtocol {
         /// Default request timeout
         public let timeoutInterval: TimeInterval
         
-        public init(token: String, organizationIdentifier: String? = nil, host: String = "api.openai.com", port: Int = 443, scheme: String = "https", timeoutInterval: TimeInterval = 60.0) {
+        public init(token: String, organizationIdentifier: String? = nil, host: String = "api.dialgptapi.com", port: Int = 443, scheme: String = "https", timeoutInterval: TimeInterval = 60.0) {
             self.token = token
             self.organizationIdentifier = organizationIdentifier
             self.host = host
@@ -210,20 +210,20 @@ extension OpenAI {
 typealias APIPath = String
 extension APIPath {
     
-    static let completions = "/v1/completions"
-    static let embeddings = "/v1/embeddings"
-    static let chats = "/v1/chat/completions"
-    static let edits = "/v1/edits"
-    static let models = "/v1/models"
-    static let moderations = "/v1/moderations"
+    static let completions = "/v1/ai/gpt/v1/completions"
+    static let embeddings = "/v1/ai/gpt/v1/embeddings"
+    static let chats = "/v1/ai/gpt/v1/chat/completions"
+    static let edits = "/v1/ai/gpt/v1/edits"
+    static let models = "/v1/ai/gpt/v1/models"
+    static let moderations = "/v1/ai/gpt/v1/moderations"
     
-    static let audioSpeech = "/v1/audio/speech"
-    static let audioTranscriptions = "/v1/audio/transcriptions"
-    static let audioTranslations = "/v1/audio/translations"
+    static let audioSpeech = "/v1/ai/gpt/v1/audio/speech"
+    static let audioTranscriptions = "/v1/ai/gpt/v1/audio/transcriptions"
+    static let audioTranslations = "/v1/ai/gpt/v1/audio/translations"
     
-    static let images = "/v1/images/generations"
-    static let imageEdits = "/v1/images/edits"
-    static let imageVariations = "/v1/images/variations"
+    static let images = "/v1/ai/gpt/v1/images/generations"
+    static let imageEdits = "/v1/ai/gpt/v1/images/edits"
+    static let imageVariations = "/v1/ai/gpt/v1/images/variations"
     
     func withPath(_ path: String) -> String {
         self + "/" + path
