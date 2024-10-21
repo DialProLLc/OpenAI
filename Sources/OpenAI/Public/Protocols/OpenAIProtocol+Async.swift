@@ -126,6 +126,19 @@ public extension OpenAIProtocol {
         }
     }
     
+    func proxyChatsStream(
+        token: String,
+        query: ChatQuery
+    ) -> AsyncThrowingStream<ChatStreamResult, Error> {
+        return AsyncThrowingStream { continuation in
+            return proxyChatsStream(token: token, query: query)  { result in
+                continuation.yield(with: result)
+            } completion: { error in
+                continuation.finish(throwing: error)
+            }
+        }
+    }
+    
     func edits(
         query: EditsQuery
     ) async throws -> EditsResult {

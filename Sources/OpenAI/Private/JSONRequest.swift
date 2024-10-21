@@ -38,4 +38,15 @@ extension JSONRequest: URLRequestBuildable {
         }
         return request
     }
+    
+    func buildProxy(token: String) throws -> URLRequest {
+        var request = URLRequest(url: url, timeoutInterval: TimeInterval(10))
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = method
+        if let body = body {
+            request.httpBody = try JSONEncoder().encode(body)
+        }
+        return request
+    }
 }

@@ -248,4 +248,23 @@ public protocol OpenAIProtocol {
                          Returns a `Result` of type `AudioTranslationResult` if successful, or an `Error` if an error occurs.
      **/
     func audioTranslations(query: AudioTranslationQuery, completion: @escaping (Result<AudioTranslationResult, Error>) -> Void)
+    
+    /**
+     This function sends a chat query to the proxy API and retrieves chat stream conversation responses. The Chat API enables you to build chatbots or conversational applications using OpenAI's powerful natural language models, like GPT-3. The result is returned by chunks.
+     
+     Example:
+     ```
+     let query = ChatQuery(model: .gpt3_5Turbo, messages: [.init(role: "user", content: "who are you")])
+     openAI.chats(query: query) { result in
+       //Handle response here
+     }
+     ```
+
+     - Parameters:
+       - token: A `String` access or refresh token for HTTPS call .
+       - query: A `ChatQuery` object containing the input parameters for the API request. This includes the lists of message objects for the conversation, the model to be used, and other settings.
+       - onResult: A closure which receives the result when the API request finishes. The closure's parameter, `Result<ChatStreamResult, Error>`, will contain either the `ChatStreamResult` object with the model's response to the conversation, or an error if the request failed.
+       - completion: A closure that is being called when all chunks are delivered or uncrecoverable error occured
+    **/
+    func proxyChatsStream(token: String, query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?)
 }
