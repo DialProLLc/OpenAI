@@ -60,64 +60,132 @@ final public class OpenAI: OpenAIProtocol {
     }
     
     public func completions(query: CompletionsQuery, completion: @escaping (Result<CompletionsResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<CompletionsResult>(body: query, url: buildURL(path: .completions)), completion: completion)
+        guard let url =  buildURL(path: .completions) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<CompletionsResult>(body: query, url: url), completion: completion)
     }
     
     public func completionsStream(query: CompletionsQuery, onResult: @escaping (Result<CompletionsResult, Error>) -> Void, completion: ((Error?) -> Void)?) {
-        performStreamingRequest(request: JSONRequest<CompletionsResult>(body: query.makeStreamable(), url: buildURL(path: .completions)), onResult: onResult, completion: completion)
+        guard let url =  buildURL(path: .completions) else {
+            onResult(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performStreamingRequest(request: JSONRequest<CompletionsResult>(body: query.makeStreamable(), url: url), onResult: onResult, completion: completion)
     }
     
     public func images(query: ImagesQuery, completion: @escaping (Result<ImagesResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<ImagesResult>(body: query, url: buildURL(path: .images)), completion: completion)
+        guard let url =  buildURL(path: .images) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<ImagesResult>(body: query, url: url), completion: completion)
     }
     
     public func imageEdits(query: ImageEditsQuery, completion: @escaping (Result<ImagesResult, Error>) -> Void) {
-        performRequest(request: MultipartFormDataRequest<ImagesResult>(body: query, url: buildURL(path: .imageEdits)), completion: completion)
+        guard let url =  buildURL(path: .imageEdits) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: MultipartFormDataRequest<ImagesResult>(body: query, url: url), completion: completion)
     }
     
     public func imageVariations(query: ImageVariationsQuery, completion: @escaping (Result<ImagesResult, Error>) -> Void) {
-        performRequest(request: MultipartFormDataRequest<ImagesResult>(body: query, url: buildURL(path: .imageVariations)), completion: completion)
+        guard let url =  buildURL(path: .imageVariations) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: MultipartFormDataRequest<ImagesResult>(body: query, url: url), completion: completion)
     }
     
     public func embeddings(query: EmbeddingsQuery, completion: @escaping (Result<EmbeddingsResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<EmbeddingsResult>(body: query, url: buildURL(path: .embeddings)), completion: completion)
+        guard let url =  buildURL(path: .embeddings) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<EmbeddingsResult>(body: query, url: url), completion: completion)
     }
     
     public func chats(query: ChatQuery, completion: @escaping (Result<ChatResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<ChatResult>(body: query, url: buildURL(path: .chats)), completion: completion)
+        guard let url =  buildURL(path: .embeddings) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<ChatResult>(body: query, url: url), completion: completion)
+    }
+    
+    public func proxyChatsStream(token: String, query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?) {
+        guard let url =  buildURL(path: .chatsProxy) else {
+            onResult(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performProxyStreamingRequest(token: token, request: JSONRequest<ChatStreamResult>(body: query.makeStreamable(), url: url), onResult: onResult, completion: completion)
     }
     
     public func chatsStream(query: ChatQuery, onResult: @escaping (Result<ChatStreamResult, Error>) -> Void, completion: ((Error?) -> Void)?) {
-        performStreamingRequest(request: JSONRequest<ChatStreamResult>(body: query.makeStreamable(), url: buildURL(path: .chats)), onResult: onResult, completion: completion)
+        guard let url =  buildURL(path: .chats) else {
+            onResult(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performStreamingRequest(request: JSONRequest<ChatStreamResult>(body: query.makeStreamable(), url: url), onResult: onResult, completion: completion)
     }
     
     public func edits(query: EditsQuery, completion: @escaping (Result<EditsResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<EditsResult>(body: query, url: buildURL(path: .edits)), completion: completion)
+        guard let url =  buildURL(path: .edits) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<EditsResult>(body: query, url:url), completion: completion)
     }
     
     public func model(query: ModelQuery, completion: @escaping (Result<ModelResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<ModelResult>(url: buildURL(path: .models.withPath(query.model)), method: "GET"), completion: completion)
+        guard let url = buildURL(path: .models.withPath(query.model)) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<ModelResult>(url: url, method: "GET"), completion: completion)
     }
     
     public func models(completion: @escaping (Result<ModelsResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<ModelsResult>(url: buildURL(path: .models), method: "GET"), completion: completion)
+        guard let url = buildURL(path: .models) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<ModelsResult>(url: url, method: "GET"), completion: completion)
     }
     
     @available(iOS 13.0, *)
     public func moderations(query: ModerationsQuery, completion: @escaping (Result<ModerationsResult, Error>) -> Void) {
-        performRequest(request: JSONRequest<ModerationsResult>(body: query, url: buildURL(path: .moderations)), completion: completion)
+        guard let url = buildURL(path: .moderation) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: JSONRequest<ModerationsResult>(body: query, url: url), completion: completion)
     }
     
     public func audioTranscriptions(query: AudioTranscriptionQuery, completion: @escaping (Result<AudioTranscriptionResult, Error>) -> Void) {
-        performRequest(request: MultipartFormDataRequest<AudioTranscriptionResult>(body: query, url: buildURL(path: .audioTranscriptions)), completion: completion)
+        guard let url = buildURL(path: .audioTranscriptions) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: MultipartFormDataRequest<AudioTranscriptionResult>(body: query, url: url), completion: completion)
     }
     
     public func audioTranslations(query: AudioTranslationQuery, completion: @escaping (Result<AudioTranslationResult, Error>) -> Void) {
-        performRequest(request: MultipartFormDataRequest<AudioTranslationResult>(body: query, url: buildURL(path: .audioTranslations)), completion: completion)
+        guard let url = buildURL(path: .audioTranslations) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performRequest(request: MultipartFormDataRequest<AudioTranslationResult>(body: query, url: url), completion: completion)
     }
     
     public func audioCreateSpeech(query: AudioSpeechQuery, completion: @escaping (Result<AudioSpeechResult, Error>) -> Void) {
-        performSpeechRequest(request: JSONRequest<AudioSpeechResult>(body: query, url: buildURL(path: .audioSpeech)), completion: completion)
+        guard let url = buildURL(path: .audioSpeech) else {
+            completion(.failure(OpenAIError.invalidURL))
+            return
+        }
+        performSpeechRequest(request: JSONRequest<AudioSpeechResult>(body: query, url: url), completion: completion)
     }
     
 }
@@ -172,6 +240,27 @@ extension OpenAI {
         }
     }
     
+    func performProxyStreamingRequest<ResultType: Codable>(token: String, request: any URLRequestBuildable, onResult: @escaping (Result<ResultType, Error>) -> Void, completion: ((Error?) -> Void)?) {
+        do {
+            let request = try request.buildProxy(token: token)
+            let session = StreamingSession<ResultType>(urlRequest: request)
+            session.onReceiveContent = {_, object in
+                onResult(.success(object))
+            }
+            session.onProcessingError = {_, error in
+                onResult(.failure(error))
+            }
+            session.onComplete = { [weak self] object, error in
+                self?.streamingSessions.removeAll(where: { $0 == object })
+                completion?(error)
+            }
+            session.perform()
+            streamingSessions.append(session)
+        } catch {
+            completion?(error)
+        }
+    }
+    
     func performSpeechRequest(request: any URLRequestBuildable, completion: @escaping (Result<AudioSpeechResult, Error>) -> Void) {
         do {
             let request = try request.build(token: configuration.token, 
@@ -197,33 +286,34 @@ extension OpenAI {
 
 extension OpenAI {
     
-    func buildURL(path: String) -> URL {
+    func buildURL(path: String) -> URL? {
         var components = URLComponents()
         components.scheme = configuration.scheme
         components.host = configuration.host
         components.port = configuration.port
         components.path = path
-        return components.url!
+        return components.url
     }
 }
 
 typealias APIPath = String
 extension APIPath {
     
-    static let completions = "/v1/ai/gpt/v1/completions"
-    static let embeddings = "/v1/ai/gpt/v1/embeddings"
-    static let chats = "/v1/ai/gpt/v1/chat/completions"
-    static let edits = "/v1/ai/gpt/v1/edits"
-    static let models = "/v1/ai/gpt/v1/models"
-    static let moderations = "/v1/ai/gpt/v1/moderations"
+    static let chatsProxy = "/v1/ai/gpt"
+    static let completions = "/v1/completions"
+    static let embeddings = "/v1/embeddings"
+    static let chats = "/v1/chat/completions"
+    static let edits = "/v1/edits"
+    static let models = "/v1/models"
+    static let moderations = "/v1/moderations"
     
-    static let audioSpeech = "/v1/ai/gpt/v1/audio/speech"
-    static let audioTranscriptions = "/v1/ai/gpt/v1/audio/transcriptions"
-    static let audioTranslations = "/v1/ai/gpt/v1/audio/translations"
+    static let audioSpeech = "/v1/audio/speech"
+    static let audioTranscriptions = "/v1/audio/transcriptions"
+    static let audioTranslations = "/v1/audio/translations"
     
-    static let images = "/v1/ai/gpt/v1/images/generations"
-    static let imageEdits = "/v1/ai/gpt/v1/images/edits"
-    static let imageVariations = "/v1/ai/gpt/v1/images/variations"
+    static let images = "/v1/images/generations"
+    static let imageEdits = "/v1/images/edits"
+    static let imageVariations = "/v1/images/variations"
     
     func withPath(_ path: String) -> String {
         self + "/" + path
